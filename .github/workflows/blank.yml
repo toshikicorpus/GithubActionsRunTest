@@ -1,4 +1,4 @@
-name: Ruby-Deploy-to-Production
+name: Rubytast
 
 on: 
   release:
