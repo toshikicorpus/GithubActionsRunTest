@@ -12,7 +12,7 @@ jobs:
     - name: label change test1
       run: | 
         pwd
-        ls
+        ls -a 
     - name: label change test2
       run: |
         echo Add other actions to build,
