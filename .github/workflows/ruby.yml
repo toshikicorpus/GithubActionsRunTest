@@ -1,16 +1,32 @@
-name: GithubActoinsTest
-on: [push]
+name: Ruby-Deploy-to-Production
+
+on: 
+  release:
+    types: [published]
+  repository_dispatch:
 
 jobs:
-  first_job:
-    name: Initial Job
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Github First Step
-        uses: actions/checkout@master
-      - run: echo All Done!
-      - run: echo Test Artifact > test.txt
-      - uses: actions/upload-artifact@master
-        with:
-          name: my-artifact
-          path: test.txt
+    - name: Checkout Repo
+      uses: actions/checkout@master
+      with:
+        ref: master
+    - name: Set up Ruby 2.3
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.3.0
+    - name: Install SSH key
+      uses: webfactory/ssh-agent@v0.1.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} # 1.で設定したsecretsを呼び出して鍵配置
+    - name: Install Libmysqlclient-dev
+      run: |
+        sudo apt-get install libmysqlclient-dev
+    - name: Bundle install
+      run: |
+        bundle install
+    - name: Deploy Production
+      run: |
+        bundle exec cap production deploy
